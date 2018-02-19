@@ -11,7 +11,7 @@ dotenv.config();
 
 function makeRequest(sym, callback) {
     //Makes the API request
-    const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${sym}&apikey=${process.env.API_KEY}`;
+    const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${sym}&apikey=${process.env.API_KEY}&outputsize=full`;
     console.log(url)
     const request = https.get(url, res => {
         
