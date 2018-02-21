@@ -16,7 +16,6 @@ class Request{
         //otherwise gets specified date, if now is defined get real time intraday  data(in interval defined)
         let url = `https://www.alphavantage.co/query?function=${now === null ? 'TIME_SERIES_DAILY' : 'TIME_SERIES_INTRADAY'}&symbol=${this.sym}${interval !== null ? '&interval=' + interval + 'min' : ''}&apikey=${process.env.API_KEY}`;
         url += specificDate !== null ? '&outputsize=full' : '';
-        console.log(url)
         const request = https.get(url, res => {
             if (res.statusCode === 200) { 
                 let output = "";
@@ -48,14 +47,18 @@ class Request{
             
         } catch (e) {
             if (e instanceof TypeError) {
-                console.log(`\nWrong or invalid symbol: \x1b[1m\x1b[31m${this.sym}\u001b[0m. Please try again with a valid stock marker.\n\x1b[32mFor a full list of stock symbols visit http://eoddata.com/symbols.aspx\n`);
+                if(!date) {
+                    console.log(`\nWrong or invalid symbol: \x1b[1m\x1b[31m${this.sym}\u001b[0m. Please try again with a valid stock marker.\n\x1b[32mFor a full list of stock symbols visit http://eoddata.com/symbols.aspx\n`);
+                } else {
+                    console.log(`\nWrong Date: \x1b[1m\x1b[31m${date}\u001b[0m was not a trading day, so there is no stock information available.\nPlease try again with a valid date specification `)
+                }
+                
             }
         }
     }
     
     createOutputRegular(res, date) {
-            const d = date !== null ? res['Time Series (Daily)'][date.toString()] : Object.keys(res['Time Series (Daily)'])[0];
-            console.log(d)
+            const d = date !== null ? date : Object.keys(res['Time Series (Daily)'])[0];
             return `
             \x1b[34m\x1b[1mInformation for "${res['Meta Data']['2. Symbol']}" on ${d}:\x1b[0m
                 Open: ${res['Time Series (Daily)'][d]['1. open']}
