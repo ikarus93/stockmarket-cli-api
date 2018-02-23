@@ -1,0 +1,24 @@
+{
+  "name": "stockapp",
+  "version": "1.0.0",
+  "description": "Cli based up to retrieve stockdata for up to 15 years",
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ikarus93/stockmarket-cli-api.git"
+  },
+  "author": "Farid Wilhelm Zimmermann",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ikarus93/stockmarket-cli-api/issues"
+  },
+  "homepage": "https://github.com/ikarus93/stockmarket-cli-api#readme",
+  "dependencies": {
+    "dotenv": "^5.0.0",
+    "fs-extra": "^5.0.0"
+  }
+}

@@ -17,5 +17,5 @@ if (!process.argv[3]) { //meaning that users requests default = latest stock dat
   
     })
 } else {
-    console.log("Invalid argument list or date format. Check documentation for how to properly input arguments")
+    console.log("Invalid argument list or date. Check documentation for how to properly input arguments.\nWhen looking for intraday data, make sure to add an interval as final parameter [1,5,15,30,60]!")
 }

@@ -1,16 +1,16 @@
 const https = require('https'),
       http = require('http'),
-      dotenv = require('dotenv');
-
-dotenv.config();
+      dotenv = require('dotenv'),
+      fs = require('fs-extra'),
+      os = require('os');
+      
+dotenv.config();   //configurates environment variables
 
 class Request{
-    
+//Contains all logic regarding request making, response parsing and output as well as error handling and input parameter validation
     constructor(sym) {
         this.sym = sym;
     }
-    
-
     makeRequest(now = null, interval = null, specificDate = null, callback) {
         //Makes api request, based on parameters defined, if specificDate not defined just gets latest stock data,
         //otherwise gets specified date, if now is defined get real time intraday  data(in interval defined)
@@ -42,7 +42,7 @@ class Request{
             if(!intra) {
                 console.log(this.createOutputRegular(response, date));
             } else {
-                this.createOutputIntra(response);
+               this.createOutputIntra(response);
             }
             
         } catch (e) {
@@ -58,6 +58,7 @@ class Request{
     }
     
     createOutputRegular(res, date) {
+            //Creates output string for all non intra-day data, use date to differ between request by date or just the latest data
             const d = date !== null ? date : Object.keys(res['Time Series (Daily)'])[0];
             return `
             \x1b[34m\x1b[1mInformation for "${res['Meta Data']['2. Symbol']}" on ${d}:\x1b[0m
@@ -69,15 +70,26 @@ class Request{
                 `;
 }
 
-
-    createOutputIntra(res, interval) {
-        console.log(res)
+    createOutputIntra(res) {
+        //takes intraday data and writes it to file
+        let resHead = res['Meta Data'];
+        let dir = os.homedir() + `/intraday_logs/${this.sym}/`;
+            
+        let path = `${dir}/${resHead['3. Last Refreshed']}.txt`.replace(" ", "-");
+        console.log(path)
+        fs.outputJson(path, res, err => {
+            if (err) {
+                console.log(`Error creating file at ${path}. Please try again`);
+            } else {
+                console.log(`Success: File saved at ${path}`)
+            }
+        })
     }
 
     verifyDate(date) {
         try {
             let dateArr = date.split("-");
-            let correctYear = dateArr[0] >= new Date().getFullYear() - 10;;
+            let correctYear = dateArr[0] >= new Date().getFullYear() - 15;;
             let correctMonth = dateArr[1] > 0 && dateArr[1] <= 12;
             let correctDay = dateArr[2] > 0 && dateArr[2] <= 31;
             return /^(\d\d\d\d)-(\d\d)-(\d\d)/.test(date) &&  correctYear && correctMonth && correctDay;
